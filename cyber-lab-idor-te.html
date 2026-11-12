@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="te"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Lab Pro — IDOR సెక్యూరిటీ ల్యాబ్</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--line:#2b3a56;--txt:#edf3ff;--muted:#a1aec6;--cyan:#55d8e8;--green:#5fe0a0;--red:#ff7777;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101b30);color:var(--txt);font:15px/1.7 system-ui,"Noto Sans Telugu",Arial,sans-serif}header,main{max-width:950px;margin:auto;padding:22px 16px}.tag{font-size:12px;color:var(--cyan);font-weight:800;letter-spacing:.08em}h1{font-size:clamp(25px,5vw,36px);line-height:1.35}h2{font-size:20px}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:650px){.grid{grid-template-columns:1fr}}label{display:block;margin:10px 0 5px}select{width:100%;padding:12px;border-radius:9px;border:1px solid #40516f;background:#0c1628;color:var(--txt)}button{border:0;border-radius:9px;padding:11px 15px;margin:9px 7px 0 0;background:var(--cyan);color:#07151a;font-weight:800;font-size:14px}button.secondary{background:#293954;color:var(--txt);border:1px solid #40516f}.output{padding:13px;background:#091321;border:1px solid var(--line);border-radius:10px;min-height:54px;overflow-wrap:anywhere}.status{font-weight:750;margin-top:9px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}.quiz{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.quiz label{font-weight:400}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--muted);font-size:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#091321;border:1px solid var(--line);padding:12px;border-radius:9px}footer{text-align:center;color:var(--muted);font-size:12px;padding:16px}
+</style></head><body>
+<header><div class="tag">CYBER LAB PRO · మాడ్యూల్ 04</div><h1>IDOR &amp; Broken Access Control ల్యాబ్</h1><p class="muted">ఒక Record ID తెలుసుకోవడం మాత్రమే దాన్ని చూడటానికి అనుమతి కాదు — ఈ విషయాన్ని సురక్షితమైన Simulation ద్వారా నేర్చుకుందాం.</p></header>
+<main>
+<section class="card"><h2>1. IDOR అంటే ఏమిటి?</h2>
+<p><b>IDOR (Insecure Direct Object Reference)</b> అనేది ఒక Access Control లోపం. ఒక Website లేదా Appలో Invoice ID, Account ID వంటి Object Reference ఉంటుంది. కానీ ఆ డేటాను చూడటానికి ప్రస్తుత Userకు అనుమతి ఉందో లేదో Server తనిఖీ చేయకపోతే IDOR సమస్య వస్తుంది.</p>
+<p><b>ఉదాహరణ:</b> Alice తన Invoice <code>INV-1001</code> చూడగలదు. ఆమె IDని <code>INV-2002</code>గా మార్చినప్పుడు Server Bob యొక్క Invoiceను కూడా చూపిస్తే, అది Broken Access Control సమస్య.</p>
+<p class="muted">ID మార్చడం ఒక్కటే Vulnerability కాదు. Serverలో Ownership / Permission Check లేకపోవడమే అసలు సమస్య.</p></section>
+
+<section class="card"><h2>2. Invoice Access Simulator</h2>
+<p>ఇక్కడ Alice లేదా Bobను ఎంచుకుని, Invoice IDను Request చేయండి. Unsafe Demoలో Ownership Check లేకపోవడాన్ని, Secure Demoలో Server Ownership Checkను పోల్చి చూడండి. ఇవన్నీ కల్పిత డేటా మాత్రమే.</p>
+<div class="grid"><div><label for="user">Login చేసిన Demo User</label><select id="user"><option value="alice">Alice</option><option value="bob">Bob</option></select><label for="invoice">Invoice Reference (Object ID)</label><select id="invoice"><option value="INV-1001">INV-1001</option><option value="INV-2002">INV-2002</option><option value="INV-3003">INV-3003</option></select><button id="unsafe">Unsafe Access Demo నడపండి</button><button id="secure" class="secondary">Secure Access Check నడపండి</button></div>
+<div><b>ప్రస్తుత User</b><div class="output" id="identity">Aliceగా Login అయ్యారు (Simulation).</div><p class="muted">Alice → INV-1001<br>Bob → INV-2002<br>Carol → INV-3003</p></div></div>
+<div class="grid" style="margin-top:14px"><div><b>Unsafe ఫలితం — Permission Check లేదు</b><div id="unsafeOut" class="output">ఇంకా Request చేయలేదు.</div><div id="unsafeStatus" class="status muted">వేచి ఉంది</div></div><div><b>Secure ఫలితం — Ownership Check ఉంది</b><div id="secureOut" class="output">ఇంకా Request చేయలేదు.</div><div id="secureStatus" class="status muted">వేచి ఉంది</div></div></div>
+</section>
+
+<section class="card"><h2>3. సరైన Security Rule</h2>
+<p>Browser పంపిన Record IDను మాత్రమే నమ్మకూడదు. Server, Login అయిన Userను Session ద్వారా గుర్తించి, ఆ Recordను చూడటానికి Permission ఉందో లేదో తనిఖీ చేసిన తర్వాతే డేటా పంపాలి.</p>
+<pre>// Server-side Authorization భావన
+invoice = findInvoice(requestedInvoiceId)
+
+if invoice.ownerId != authenticatedUser.id:
+    return 403 Forbidden
+
+return invoice</pre>
+<p class="muted">ఇది అర్థం చేసుకోవడానికి ఇచ్చిన Pseudocode మాత్రమే. నిజమైన Appsలో Roles, Sharing, Tenant మరియు ఇతర Business Rules కూడా తనిఖీ చేయాలి.</p></section>
+
+<section class="card"><h2>4. నాలెడ్జ్ టెస్ట్</h2>
+<div class="quiz"><b>ప్రశ్న 1: IDOR Vulnerability ఎప్పుడు వస్తుంది?</b><label><input type="radio" name="q1" value="a"> User ID మార్చినప్పుడు Server Permission Check చేయకపోతే</label><label><input type="radio" name="q1" value="b"> ప్రతి ID Numberగా ఉన్నప్పుడు</label></div>
+<div class="quiz"><b>ప్రశ్న 2: Access Control ఎక్కడ అమలు చేయాలి?</b><label><input type="radio" name="q2" value="a"> Browserలో Button దాచడం మాత్రమే</label><label><input type="radio" name="q2" value="b"> ప్రతి Protected Requestకు Serverలో</label></div>
+<div class="quiz"><b>ప్రశ్న 3: IDని ఊహించడం కష్టంగా ఉంచితేనే పూర్తి Security వస్తుందా?</b><label><input type="radio" name="q3" value="a"> అవును</label><label><input type="radio" name="q3" value="b"> కాదు. Authorization Check తప్పనిసరి</label></div>
+<button id="check">సమాధానాలు తనిఖీ చేయండి</button><button id="clear" class="secondary">మళ్లీ ప్రారంభించండి</button><div id="result" class="status" aria-live="polite"></div></section>
+
+<section class="card"><h2>5. మీ ప్రాక్టీస్ టాస్క్</h2><p>ముందుగా Aliceను ఎంచుకోండి. తర్వాత <code>INV-2002</code>ను Request చేయండి. Unsafe మరియు Secure ఫలితాలను పోల్చండి. ఇప్పుడు Bobను ఎంచుకుని అదే Invoiceను Request చేయండి.</p><p><b>మీరు వివరించాల్సింది:</b> Secure Check ఒకరికి Access ఎందుకు ఇస్తుంది? మరొకరికి ఎందుకు నిరాకరిస్తుంది?</p><span class="pill">తదుపరి మాడ్యూల్: API Security Lab</span></section>
+<footer>Cyber Lab Pro · అనుమతి ఉన్న Systemsలో మాత్రమే Security Testing చేయండి · కల్పిత Local Records · నిజమైన డేటా లేదు</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const invoices={
+ "INV-1001":{owner:"alice",text:"INV-1001 · Alice · Training Invoice · ₹1,250"},
+ "INV-2002":{owner:"bob",text:"INV-2002 · Bob · Training Invoice · ₹2,400"},
+ "INV-3003":{owner:"carol",text:"INV-3003 · Carol · Training Invoice · ₹980"}
+};
+const names={alice:"Alice",bob:"Bob",carol:"Carol"};
+$("user").addEventListener("change",()=>{$("identity").textContent=names[$("user").value]+"గా Login అయ్యారు (Simulation).";});
+function render(out,text,status,kind){$(out).textContent=text;$(status).textContent=kind==="bad"?"Access Control లోపం చూపబడింది":kind==="good"?"Authorization Check విజయవంతం":"Request పూర్తయింది";$(status).className="status "+kind;}
+function request(mode){const user=$("user").value,id=$("invoice").value,record=invoices[id];if(mode==="unsafe"){render("unsafeOut","Ownership Check లేకుండానే Record చూపబడింది: "+record.text,"unsafeStatus","bad");}else if(record.owner===user){render("secureOut","అనుమతి ఉంది: "+record.text,"secureStatus","good");}else{render("secureOut","403 Forbidden — ఈ Invoiceను చూడటానికి ప్రస్తుత Userకు అనుమతి లేదు.","secureStatus","good");}}
+$("unsafe").onclick=()=>request("unsafe");$("secure").onclick=()=>request("secure");
+$("check").onclick=()=>{const key={q1:"a",q2:"b",q3:"b"};let n=0;for(const [q,a] of Object.entries(key)){const c=document.querySelector('input[name="'+q+'"]:checked');if(c&&c.value===a)n++;}$("result").textContent="మీ స్కోర్: "+n+"/3. "+(n===3?"చాలా బాగుంది! మీరు Access Control భావనను అర్థం చేసుకున్నారు.":"పాఠాన్ని మరోసారి చదివి ప్రయత్నించండి.");$("result").className="status "+(n===3?"good":"warn");};
+$("clear").onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);$("result").textContent="";};
+</script></body></html>
