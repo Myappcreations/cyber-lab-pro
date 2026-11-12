@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Lab Pro — API Security Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--line:#2b3a56;--txt:#edf3ff;--muted:#a1aec6;--cyan:#55d8e8;--green:#5fe0a0;--red:#ff7777;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101b30);color:var(--txt);font:15px/1.65 system-ui,Arial}header,main{max-width:960px;margin:auto;padding:22px 16px}.tag{font-size:12px;color:var(--cyan);font-weight:800;letter-spacing:.1em}h1{font-size:clamp(25px,5vw,36px);line-height:1.3}h2{font-size:20px}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:650px){.grid{grid-template-columns:1fr}}label{display:block;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border-radius:9px;border:1px solid #40516f;background:#0c1628;color:var(--txt);font:inherit}textarea{min-height:90px;font-family:ui-monospace,monospace}button{border:0;border-radius:9px;padding:11px 15px;margin:9px 7px 0 0;background:var(--cyan);color:#07151a;font-weight:800}button.secondary{background:#293954;color:var(--txt);border:1px solid #40516f}.output,pre{padding:13px;background:#091321;border:1px solid var(--line);border-radius:10px;min-height:52px;overflow-wrap:anywhere;white-space:pre-wrap}.status{font-weight:750;margin-top:9px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}.quiz{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.quiz label{font-weight:400}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--muted);font-size:12px}code,pre{font-family:ui-monospace,monospace}footer{text-align:center;color:var(--muted);font-size:12px;padding:16px}
+</style></head><body>
+<header><div class="tag">CYBER LAB PRO · MODULE 05</div><h1>API Security Lab</h1><p class="muted">API requests, HTTP methods, status codes, headers and authorization — with safe local simulations.</p></header>
+<main>
+<section class="card"><h2>1. API అంటే ఏమిటి?</h2>
+<p>API (Application Programming Interface) అనేది రెండు software systems ఒకదానితో ఒకటి communicate అవ్వడానికి ఉపయోగించే interface. ఉదాహరణకు, Mobile Banking App తన balance చూపించడానికి Bank Serverకి API Request పంపుతుంది. Server ఆ Requestని process చేసి Response పంపిస్తుంది.</p>
+<p><b>Request</b> = App అడిగే సమాచారం లేదా action. <b>Response</b> = Server తిరిగి ఇచ్చే ఫలితం.</p></section>
+
+<section class="card"><h2>2. Common HTTP Methods</h2>
+<div class="grid">
+<div class="output"><b>GET</b><br>Data retrieve చేయడానికి. Example: account details చూడటం.</div>
+<div class="output"><b>POST</b><br>కొత్త data లేదా resource create చేయడానికి. Example: payment request create చేయడం.</div>
+<div class="output"><b>PUT</b><br>ఒక resourceని పూర్తిగా update చేయడానికి.</div>
+<div class="output"><b>DELETE</b><br>ఒక resourceని delete చేయడానికి.</div>
+</div>
+<p class="muted">HTTP method ఒక్కటే permission ఇవ్వదు. ప్రతి requestకి server authentication మరియు authorization checks చేయాలి.</p></section>
+
+<section class="card"><h2>3. API Request Simulator</h2>
+<p>ఇక్కడ ఒక fictional training APIని simulate చేస్తున్నాం. Method, endpoint ఎంచుకుని request పంపండి. ఇది నిజమైన serverకి connect కాదు.</p>
+<div class="grid"><div><label for="method">HTTP Method</label><select id="method"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select><label for="endpoint">Endpoint</label><select id="endpoint"><option value="/api/profile">/api/profile</option><option value="/api/orders">/api/orders</option><option value="/api/admin">/api/admin</option></select><label for="token">Authorization Token</label><select id="token"><option value="valid">Valid demo token (Alice)</option><option value="missing">No token</option><option value="invalid">Invalid token</option></select><button id="send">Send Request</button><button id="reset" class="secondary">Reset</button></div>
+<div><b>Request Preview</b><div class="output" id="requestPreview">GET /api/profile</div><b style="display:block;margin-top:12px">Response</b><div class="output" id="response">Waiting for request…</div><div id="responseStatus" class="status muted">No response yet</div></div></div>
+<p class="muted">Demo rule: /api/profile and /api/orders require a valid token. /api/admin requires an admin token, which this demo does not provide.</p></section>
+
+<section class="card"><h2>4. HTTP Status Codes</h2>
+<ul><li><b>200 OK:</b> Request విజయవంతంగా పూర్తయింది.</li><li><b>201 Created:</b> కొత్త resource create అయింది.</li><li><b>400 Bad Request:</b> Requestలో తప్పు ఉంది.</li><li><b>401 Unauthorized:</b> Valid authentication లేదు.</li><li><b>403 Forbidden:</b> User గుర్తించబడ్డాడు, కానీ access permission లేదు.</li><li><b>404 Not Found:</b> Resource దొరకలేదు.</li><li><b>500 Internal Server Error:</b> Serverలో unexpected error.</li></ul>
+<p class="muted">401 vs 403 గుర్తుంచుకోండి: 401 = sign in/authenticate కావాలి. 403 = authenticate అయ్యారు, కానీ permission లేదు.</p></section>
+
+<section class="card"><h2>5. API Security Checklist</h2>
+<ul><li>HTTPS ఉపయోగించాలి.</li><li>Tokensని URLలో కాకుండా secure Authorization headerలో పంపాలి.</li><li>Token expiry, rotation మరియు revocation అమలు చేయాలి.</li><li>ప్రతి endpointలో server-side authorization check చేయాలి.</li><li>Input validation, rate limiting మరియు safe error handling అమలు చేయాలి.</li><li>Secretsని public JavaScript లేదా GitHub repositoryలో పెట్టకూడదు.</li></ul>
+<pre>GET /api/profile HTTP/1.1
+Host: training.example
+Authorization: Bearer DEMO_TOKEN
+Accept: application/json</pre>
+<p class="muted">ఇది illustrative request format మాత్రమే. DEMO_TOKEN నిజమైన credential కాదు.</p></section>
+
+<section class="card"><h2>6. Knowledge Check</h2>
+<div class="quiz"><b>Q1. GET method సాధారణంగా దేనికి ఉపయోగిస్తారు?</b><label><input type="radio" name="q1" value="a"> Data retrieve చేయడానికి</label><label><input type="radio" name="q1" value="b"> Server shutdown చేయడానికి</label></div>
+<div class="quiz"><b>Q2. Valid login ఉన్నా admin permission లేకపోతే ఏ status రావాలి?</b><label><input type="radio" name="q2" value="a"> 401</label><label><input type="radio" name="q2" value="b"> 403</label></div>
+<div class="quiz"><b>Q3. API tokenని ఎక్కడ పంపడం మంచిది?</b><label><input type="radio" name="q3" value="a"> URL query stringలో</label><label><input type="radio" name="q3" value="b"> HTTPS ద్వారా Authorization headerలో</label></div>
+<button id="check">Check Answers</button><button id="clear" class="secondary">Clear</button><div id="quizResult" class="status" aria-live="polite"></div></section>
+
+<section class="card"><h2>7. Your Practice Task</h2>
+<p>1. Methodని GETగా ఉంచండి. Endpoint `/api/profile` ఎంచుకోండి. Valid demo tokenతో `Send Request` నొక్కండి.</p>
+<p>2. Tokenని `No token`గా మార్చి మళ్లీ Request పంపండి. Status code compare చేయండి.</p>
+<p>3. ఇప్పుడు `/api/admin` endpointని ఎంచుకుని Valid demo tokenతో request పంపండి. ఎందుకు 403 వస్తుందో వివరించండి.</p>
+<p><b>గుర్తుంచుకోండి:</b> Authentication అంటే User ఎవరో నిర్ధారించడం. Authorization అంటే ఆ User ఏ data లేదా action access చేయవచ్చో నిర్ణయించడం.</p><span class="pill">Next: Security Headers &amp; Secure API Design</span></section>
+<footer>Cyber Lab Pro · Authorized learning only · Local fictional API simulation · No external requests</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function preview(){$("requestPreview").textContent=$("method").value+" "+$("endpoint").value+"\nAuthorization: "+$("token").selectedOptions[0].text;}
+["method","endpoint","token"].forEach(id=>$(id).addEventListener("change",preview));
+$("send").onclick=()=>{const method=$("method").value,path=$("endpoint").value,token=$("token").value;let code=200,msg="200 OK — Request successful. ";
+if(token==="missing"){code=401;msg="401 Unauthorized — Authentication required. Please sign in.";}
+else if(token==="invalid"){code=401;msg="401 Unauthorized — The supplied token is invalid or expired.";}
+else if(path==="/api/admin"){code=403;msg="403 Forbidden — Alice is authenticated but does not have admin permission.";}
+else if(path==="/api/orders"&&method==="POST"){code=201;msg="201 Created — Fictional training order created.";}
+else if(path==="/api/orders"&&method==="DELETE"){code=403;msg="403 Forbidden — Demo policy does not allow this action.";}
+else if(path==="/api/profile"&&method==="DELETE"){code=405;msg="405 Method Not Allowed — DELETE is not supported for this endpoint.";}
+else if(path==="/api/profile"&&method==="PUT"){code=200;msg="200 OK — Fictional profile update simulated.";}
+else if(path==="/api/profile"){msg="200 OK — Profile data returned: { name: Alice, role: user }";}
+else if(path==="/api/orders"){msg="200 OK — Orders returned: [ORD-101, ORD-102]";}
+$("response").textContent=msg;$("responseStatus").textContent="HTTP "+code;$("responseStatus").className="status "+(code>=400?"bad":"good");};
+$("reset").onclick=()=>{$("method").value="GET";$("endpoint").value="/api/profile";$("token").value="valid";$("response").textContent="Waiting for request…";$("responseStatus").textContent="No response yet";$("responseStatus").className="status muted";preview();};
+$("check").onclick=()=>{const a={q1:"a",q2:"b",q3:"b"};let n=0;for(const [q,v] of Object.entries(a)){const c=document.querySelector('input[name="'+q+'"]:checked');if(c&&c.value===v)n++;}$("quizResult").textContent="Your Score: "+n+"/3. "+(n===3?"Excellent! All answers correct.":"Review the lesson and try again.");$("quizResult").className="status "+(n===3?"good":"warn");};
+$("clear").onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);$("quizResult").textContent="";};
+preview();
+</script></body></html>
