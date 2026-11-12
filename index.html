@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Lab Pro</title>
+<style>
+:root {
+  --bg:#0b1020;
+  --panel:#151e32;
+  --text:#edf3ff;
+  --muted:#9eacc5;
+  --green:#35d49a;
+  --blue:#66a8ff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header {
+  padding:18px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #26334c;
+}
+.logo { font-size:21px;font-weight:bold; }
+.logo span { color:var(--green); }
+nav a {
+  color:var(--muted);
+  text-decoration:none;
+  margin-left:16px;
+  font-size:14px;
+}
+main { max-width:1100px;margin:auto;padding:35px 20px; }
+.hero {
+  padding:38px 25px;
+  border-radius:18px;
+  background:linear-gradient(130deg,#182b47,#17203a);
+  border:1px solid #2c4260;
+}
+.tag { color:var(--green);font-size:13px;font-weight:bold; }
+h1 { font-size:36px;margin:15px 0; }
+p { color:var(--muted);line-height:1.6; }
+.btn {
+  display:inline-block;
+  background:var(--green);
+  color:#07151a;
+  padding:12px 18px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+  margin-top:12px;
+}
+.section-title { margin:35px 0 18px; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.card {
+  background:var(--panel);
+  border:1px solid #283650;
+  padding:20px;
+  border-radius:13px;
+}
+.card h3 { margin-top:8px; }
+.card p { font-size:14px; }
+.icon { font-size:27px; }
+.card a {
+  color:var(--green);
+  text-decoration:none;
+  font-size:14px;
+  font-weight:bold;
+}
+.notice {
+  border-left:4px solid var(--green);
+  background:#142b2b;
+  padding:17px;
+  margin-top:30px;
+  border-radius:7px;
+}
+footer {
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+  font-size:13px;
+}
+@media(max-width:600px) {
+  h1 { font-size:29px; }
+  nav a { margin-left:8px;font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CYBER <span>LAB PRO</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#modules">Modules</a>
+    <a href="#about">About</a>
+  </nav>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="tag">YOUR PERSONAL CYBERSECURITY ACADEMY</div>
+  <h1>Learn. Build. Test. Secure.</h1>
+  <p>
+    Learn ethical hacking, web application security,
+    Python automation and defensive security through
+    practical, authorized training exercises.
+  </p>
+  <a class="btn" href="#modules">Explore Learning Modules →</a>
+</section>
+
+<h2 class="section-title" id="modules">Learning Modules</h2>
+
+<section class="grid">
+  <article class="card">
+    <div class="icon">🌐</div>
+    <h3>Web Security</h3>
+    <p>Understand HTTP, web architecture and common vulnerabilities.</p>
+    <a href="#web">Explore module →</a>
+  </article>
+
+  <article class="card">
+    <div class="icon">💉</div>
+    <h3>SQL Injection</h3>
+    <p>Learn how unsafe database queries work and how to prevent them.</p>
+    <a href="#sql">Explore module →</a>
+  </article>
+
+  <article class="card">
+    <div class="icon">🛡️</div>
+    <h3>XSS Security</h3>
+    <p>Study cross-site scripting and safe output encoding.</p>
+    <a href="#xss">Explore module →</a>
+  </article>
+
+  <article class="card">
+    <div class="icon">🔐</div>
+    <h3>Authentication</h3>
+    <p>Learn password hashing, sessions and access control.</p>
+    <a href="#auth">Explore module →</a>
+  </article>
+
+  <article class="card">
+    <div class="icon">🐍</div>
+    <h3>Python Security</h3>
+    <p>Build scripts for defensive security and automation.</p>
+    <a href="#python">Explore module →</a>
+  </article>
+
+  <article class="card">
+    <div class="icon">📋</div>
+    <h3>Security Reports</h3>
+    <p>Document findings, assess risks and track remediation.</p>
+    <a href="#reports">Explore module →</a>
+  </article>
+</section>
+
+<h2 class="section-title" id="about">Our Training Approach</h2>
+<section class="card">
+  <p id="web"><b>Web Security:</b> Understand how web applications communicate.</p>
+  <p id="sql"><b>SQL Injection:</b> Use safe simulations to understand vulnerable and parameterized queries.</p>
+  <p id="xss"><b>XSS:</b> Compare unsafe rendering with properly escaped output.</p>
+  <p id="auth"><b>Authentication:</b> Practice secure password and session handling.</p>
+  <p id="python"><b>Python:</b> Automate defensive checks in your own lab.</p>
+  <p id="reports"><b>Reporting:</b> Record evidence and verify security fixes.</p>
+</section>
+
+<div class="notice">
+  <b>⚠️ Authorized learning only</b>
+  <p>
+    All vulnerability testing must be performed on systems
+    you own or have explicit permission to test.
+    Public website demonstrations are simulations.
+  </p>
+</div>
+</main>
+
+<footer>
+  CYBER LAB PRO · Learn cybersecurity responsibly
+  <br>Version 1.0
+</footer>
+
+</body>
+</html>
