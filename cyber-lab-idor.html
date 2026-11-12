@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Lab Pro — IDOR Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--line:#2b3a56;--txt:#edf3ff;--muted:#a1aec6;--cyan:#55d8e8;--green:#5fe0a0;--red:#ff7777;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101b30);color:var(--txt);font:15px/1.55 system-ui,Arial}header,main{max-width:950px;margin:auto;padding:22px 16px}.tag{font-size:12px;color:var(--cyan);font-weight:800;letter-spacing:.1em}h1{font-size:clamp(25px,5vw,36px)}h2{font-size:20px}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:650px){.grid{grid-template-columns:1fr}}label{display:block;margin:10px 0 5px}input,select{width:100%;padding:12px;border-radius:9px;border:1px solid #40516f;background:#0c1628;color:var(--txt)}button{border:0;border-radius:9px;padding:11px 15px;margin:9px 7px 0 0;background:var(--cyan);color:#07151a;font-weight:800}button.secondary{background:#293954;color:var(--txt);border:1px solid #40516f}.output{padding:13px;background:#091321;border:1px solid var(--line);border-radius:10px;min-height:54px;overflow-wrap:anywhere}.status{font-weight:750;margin-top:9px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}.quiz{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.quiz label{font-weight:400}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 9px;color:var(--muted);font-size:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#091321;border:1px solid var(--line);padding:12px;border-radius:9px}footer{text-align:center;color:var(--muted);font-size:12px;padding:16px}
+</style></head><body>
+<header><div class="tag">CYBER LAB PRO · MODULE 04</div><h1>IDOR &amp; Broken Access Control Lab</h1><p class="muted">Learn why a record ID is not proof of permission. Practice with fictional accounts in a safe browser simulation.</p></header>
+<main>
+<section class="card"><h2>1. What is IDOR?</h2>
+<p><b>Insecure Direct Object Reference (IDOR)</b> is an access-control weakness where an application exposes an object reference (such as an invoice ID or account number) and fails to verify that the current user is allowed to access that object.</p>
+<p>Example: Alice is signed in and can view invoice <code>INV-1001</code>. If she changes the reference to <code>INV-2002</code> and the server returns Bob's invoice without checking ownership, that is a broken access-control issue.</p>
+<p class="muted">Changing an ID is not automatically a vulnerability. The security failure is missing server-side authorization.</p></section>
+
+<section class="card"><h2>2. Fictional invoice access simulator</h2>
+<p>Sign in as Alice or Bob, then choose an invoice reference. Compare the unsafe demonstration (no ownership check) with the secure demonstration (server-style ownership check). All records are fictional and remain in this page.</p>
+<div class="grid"><div><label for="user">Signed-in demo user</label><select id="user"><option value="alice">Alice</option><option value="bob">Bob</option></select><label for="invoice">Invoice reference (object ID)</label><select id="invoice"><option value="INV-1001">INV-1001</option><option value="INV-2002">INV-2002</option><option value="INV-3003">INV-3003</option></select><button id="unsafe">Run unsafe access demo</button><button id="secure" class="secondary">Run secure access check</button></div>
+<div><b>Selected identity</b><div class="output" id="identity">Signed in as Alice (simulation).</div><p class="muted">Alice owns INV-1001. Bob owns INV-2002. Carol owns INV-3003.</p></div></div>
+<div class="grid" style="margin-top:14px"><div><b>Unsafe result — missing authorization</b><div id="unsafeOut" class="output">No request yet.</div><div id="unsafeStatus" class="status muted">Waiting</div></div><div><b>Secure result — ownership enforced</b><div id="secureOut" class="output">No request yet.</div><div id="secureStatus" class="status muted">Waiting</div></div></div>
+</section>
+
+<section class="card"><h2>3. The security rule</h2>
+<p>Do not trust a record ID supplied by the browser. The server must identify the authenticated user from the session and check permission before returning the record.</p>
+<pre>// Conceptual server-side authorization
+invoice = findInvoice(requestedInvoiceId)
+
+if invoice.ownerId != authenticatedUser.id:
+    return 403 Forbidden
+
+return invoice</pre>
+<p class="muted">Illustrative pseudocode only. Real applications also need tenant, role, sharing, and business-rule checks where applicable.</p></section>
+
+<section class="card"><h2>4. Knowledge check</h2>
+<div class="quiz"><b>Q1. What makes an IDOR vulnerability?</b><label><input type="radio" name="q1" value="a"> A user changes an ID, and the server fails to check permission</label><label><input type="radio" name="q1" value="b"> Every ID is numeric</label></div>
+<div class="quiz"><b>Q2. Where must access control be enforced?</b><label><input type="radio" name="q2" value="a"> Only by hiding buttons in the browser</label><label><input type="radio" name="q2" value="b"> On the server for every protected object/request</label></div>
+<div class="quiz"><b>Q3. Is an unpredictable ID alone a complete fix?</b><label><input type="radio" name="q3" value="a"> Yes</label><label><input type="radio" name="q3" value="b"> No, authorization checks are still required</label></div>
+<button id="check">Check answers</button><button id="clear" class="secondary">Clear</button><div id="result" class="status" aria-live="polite"></div></section>
+
+<section class="card"><h2>5. Practice task</h2><p>Select Alice and request <code>INV-2002</code>. Compare the unsafe and secure results. Then select Bob and request the same invoice. Explain why the secure check allows one request and denies the other.</p><span class="pill">Next: API Security Lab</span></section>
+<footer>Cyber Lab Pro · Authorized learning only · Fictional local records · No real systems or data</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const invoices={
+ "INV-1001":{owner:"alice",text:"INV-1001 · Alice · Training invoice · ₹1,250"},
+ "INV-2002":{owner:"bob",text:"INV-2002 · Bob · Training invoice · ₹2,400"},
+ "INV-3003":{owner:"carol",text:"INV-3003 · Carol · Training invoice · ₹980"}
+};
+const names={alice:"Alice",bob:"Bob",carol:"Carol"};
+$("user").addEventListener("change",()=>{$("identity").textContent="Signed in as "+names[$("user").value]+" (simulation)."});
+function render(id,text,status,kind){$(id).textContent=text;$(status).textContent=kind==="bad"?"Access-control failure demonstrated":kind==="good"?"Authorization check passed":"Request completed";$(status).className="status "+kind;}
+function request(mode){const user=$("user").value,id=$("invoice").value,record=invoices[id];if(mode==="unsafe"){render("unsafeOut","Record returned without checking ownership: "+record.text,"unsafeStatus","bad");}else if(record.owner===user){render("secureOut","Access granted: "+record.text,"secureStatus","good");}else{render("secureOut","403 Forbidden — the signed-in user is not authorized to view this invoice.","secureStatus","good");}}
+$("unsafe").onclick=()=>request("unsafe");$("secure").onclick=()=>request("secure");
+$("check").onclick=()=>{const key={q1:"a",q2:"b",q3:"b"};let n=0;for(const [q,a] of Object.entries(key)){const c=document.querySelector('input[name="'+q+'"]:checked');if(c&&c.value===a)n++;}$("result").textContent="Score: "+n+"/3. "+(n===3?"Excellent — you understand the access-control rule!":"Review the lesson and try again.");$("result").className="status "+(n===3?"good":"warn");};
+$("clear").onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);$("result").textContent="";};
+</script></body></html>
