@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Secrets
+*.pem
+*.key
+secrets.json
+
+# Database
+*.db
+*.sqlite3
+
+# Temporary files
+*.log
+.DS_Store
