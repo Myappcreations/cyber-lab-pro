@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Lab Pro | SQL Injection Simulator</title>
+<style>
+:root{--bg:#0b1020;--panel:#151e32;--line:#2b3a55;--text:#edf3ff;--muted:#a8b5cc;--green:#35d49a;--red:#ff7373;--amber:#ffd27a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px Arial;line-height:1.5}
+header{padding:16px 5%;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap}.logo{font-weight:bold}.logo span{color:var(--green)}a{color:var(--green);text-decoration:none}
+main{max-width:950px;margin:28px auto;padding:0 16px}.tag{color:var(--green);font-size:12px;font-weight:bold;letter-spacing:1px}h1{font-size:clamp(28px,5vw,38px);margin:8px 0}
+p{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.warning{border-left:4px solid var(--amber);padding:12px;background:#292516;border-radius:8px;color:#f8e8bd}
+label{display:block;font-weight:bold;margin:12px 0 6px}input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#0d1527;color:var(--text);font-size:16px}
+button{border:0;border-radius:8px;padding:11px 15px;font-weight:bold;cursor:pointer;margin:8px 7px 0 0}.primary{background:var(--green);color:#061710}.secondary{background:#263750;color:var(--text)}.active{outline:2px solid var(--green)}
+.result,pre{padding:13px;border-radius:9px;margin-top:12px;background:#0d1527;border:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.small{font-size:13px;color:var(--muted)}.ok{color:var(--green)}.bad{color:var(--red)}.hint{color:var(--amber)}
+footer{text-align:center;padding:28px;color:var(--muted);font-size:13px}
+</style></head>
+<body>
+<header><div class="logo">CYBER <span>LAB PRO</span></div><a href="index.html">← Academy Home</a></header>
+<main>
+<div class="tag">MODULE 01 · SAFE BROWSER SIMULATION</div>
+<h1>SQL Injection Simulator</h1>
+<p>Explore how unsafe query construction can change login logic, then compare it with parameterized queries.</p>
+<div class="warning"><b>Training boundary:</b> This page uses a fake dataset and JavaScript only. It does not connect to a database, send requests, or test any real login system.</div>
+<section class="card">
+<h2>1. Try the demo login</h2><p class="small">Normal demo account: <b>alice</b> / <b>demo123</b>.</p>
+<label for="username">Username</label><input id="username" value="alice" autocomplete="off">
+<label for="password">Password</label><input id="password" type="password" value="demo123">
+<button id="vulnerableBtn" class="secondary active" type="button">Vulnerable simulation</button>
+<button id="secureBtn" class="secondary" type="button">Secure simulation</button><br>
+<button id="runBtn" class="primary" type="button">Run simulation</button>
+<button id="resetBtn" class="secondary" type="button">Reset</button>
+<div id="result" class="result" aria-live="polite">Choose a mode and run the simulation.</div>
+</section>
+<section class="grid">
+<div class="card"><h2>2. Unsafe query construction</h2><p class="small">A vulnerable app may join user input directly into SQL text.</p><pre id="queryPreview"></pre><p class="small">This page does not execute the displayed SQL.</p></div>
+<div class="card"><h2>3. Secure query pattern</h2><pre>SELECT id, username
+FROM users
+WHERE username = ?
+  AND password_hash = ?;</pre><p class="small">Placeholders keep values separate from SQL instructions. Real apps must verify password hashes, not store plaintext passwords.</p></div>
+</section>
+<section class="card"><h2>4. Learning check</h2><p>Why are placeholders safer?</p><button id="answerBtn" class="secondary" type="button">Show explanation</button><div id="answer" class="result" hidden>Placeholders send values separately from SQL instructions. The database treats supplied text as data rather than executable SQL syntax, so input cannot change the query structure.</div></section>
+</main><footer>Cyber Lab Pro · Learn, test and secure — only in authorized environments.</footer>
+<script>
+(() => {
+const user=document.getElementById('username'), pass=document.getElementById('password');
+const result=document.getElementById('result'), preview=document.getElementById('queryPreview');
+let mode='vulnerable';
+function previewQuery(){
+ const u=user.value.replaceAll("'","\\'"), p=pass.value.replaceAll("'","\\'");
+ preview.textContent=mode==='vulnerable'
+ ? `SELECT * FROM users WHERE username = '${u}' AND password = '${p}';`
+ : 'SELECT id, username FROM users WHERE username = ? AND password_hash = ?;\\nValues supplied separately.';
+}
+function setMode(next){
+ mode=next;
+ document.getElementById('vulnerableBtn').classList.toggle('active',mode==='vulnerable');
+ document.getElementById('secureBtn').classList.toggle('active',mode==='secure');
+ result.textContent=mode==='vulnerable'?'Vulnerable simulation selected. Use only the supplied training example.':'Secure simulation selected. Only exact demo credentials should work.';
+ previewQuery();
+}
+function run(){
+ previewQuery();
+ if(mode==='secure'){
+  const ok=user.value==='alice' && pass.value==='demo123';
+  result.innerHTML=ok?'<span class="ok"><b>LOGIN ACCEPTED</b></span><br>Exact demo credentials matched.':'<span class="ok"><b>LOGIN REJECTED</b></span><br>No exact match in the fake dataset. Input cannot alter query structure.';
+  return;
+ }
+ const injection=/'\s*or\s*'?\s*1\s*'?\s*=\s*'?\s*1/i.test(user.value+' '+pass.value);
+ const normal=user.value==='alice' && pass.value==='demo123';
+ result.innerHTML=injection?'<span class="bad"><b>SIMULATED AUTHENTICATION BYPASS</b></span><br>The training model recognizes an always-true condition. This is not a real SQL engine.':normal?'<span class="ok"><b>LOGIN ACCEPTED</b></span><br>Normal demo credentials matched.':'<span class="hint"><b>LOGIN REJECTED</b></span><br>No matching demo credentials.';
+}
+document.getElementById('vulnerableBtn').onclick=()=>setMode('vulnerable');
+document.getElementById('secureBtn').onclick=()=>setMode('secure');
+document.getElementById('runBtn').onclick=run;
+document.getElementById('resetBtn').onclick=()=>{user.value='alice';pass.value='demo123';setMode('vulnerable');};
+document.getElementById('answerBtn').onclick=()=>document.getElementById('answer').hidden=false;
+user.addEventListener('input',previewQuery);pass.addEventListener('input',previewQuery);previewQuery();
+})();
+</script></body></html>
