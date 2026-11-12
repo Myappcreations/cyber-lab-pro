@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cyber Lab Pro Python Lab</title>
+<style>
+body{margin:0;background:#08111f;color:#edf4ff;font:15px system-ui;padding:18px}main{max-width:850px;margin:auto}.card{background:#101d30;border:1px solid #29405d;border-radius:15px;padding:15px;margin:14px 0}h1{font-size:22px}textarea{width:100%;min-height:240px;box-sizing:border-box;background:#050c15;color:#d9e8ff;border:1px solid #38516f;border-radius:10px;padding:12px;font:13px/1.6 monospace}button,select{padding:10px 13px;border-radius:9px;border:1px solid #42648b;background:#1b3d60;color:white;margin:5px 4px 5px 0}button.primary{background:#176c50}.output{white-space:pre-wrap;min-height:90px;background:#050c15;border:1px solid #29405d;border-radius:10px;padding:12px;font:13px monospace;color:#aef0ca}.muted{color:#a9bbd2;font-size:13px}.notice{background:#302719;border-left:3px solid #e4b85d;padding:10px;border-radius:7px;color:#f1dfb9;font-size:13px}
+</style></head><body><main>
+<h1>🛡️ Cyber Lab Pro — Python Practice Lab</h1><p class="muted">Module 01 · Browser-based Python learning · Android friendly</p>
+<section class="card"><h2>Python Code Editor</h2><p class="muted">Sample ఎంచుకోండి, code చూడండి, Run Python నొక్కండి.</p>
+<select id="sample"><option value="hello">01 · Hello Python</option><option value="variables">02 · Variables</option><option value="bank">03 · Bank account</option><option value="secure">04 · Parameterized query concept</option></select>
+<textarea id="code" spellcheck="false">print("Hello, Cyber Lab Pro!")
+print("Python is running in your browser.")</textarea>
+<div><button class="primary" id="run" disabled>▶ Run Python</button><button id="reset">Reset</button><button id="clear">Clear Output</button></div><p class="muted" id="status">Loading Python runtime…</p></section>
+<section class="card"><h2>Output Console</h2><div class="output" id="output">Python runtime is starting…</div></section>
+<section class="card"><h2>Day 1 Task</h2><ol><li>Hello Python sample Run చేయండి.</li><li>print() లోని message మార్చండి.</li><li>Bank Account sampleలో balance 50000 నుంచి 75000కి మార్చండి.</li><li>మళ్లీ Run చేసి Output చూడండి.</li></ol><div class="notice">Safety: ఇది Browserలో నడిచే learning environment మాత్రమే; నిజమైన server లేదా database కాదు. Passwords, API keys, personal data ఇక్కడ పెట్టవద్దు. మీకు అనుమతి ఉన్న Labలోనే security testing చేయండి.</div></section>
+<p class="muted">Powered by Pyodide / WebAssembly. మొదటిసారి Python runtime load కావడానికి internet అవసరం.</p></main>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script><script>
+const samples={
+hello:'print("Hello, Cyber Lab Pro!")\\nprint("Python is running in your browser.")',
+variables:'name = "Ravi"\\nage = 25\\nprint("Name:", name)\\nprint("Age:", age)\\nprint("Next year:", age + 1)',
+bank:'account_holder = "Ram"\\naccount_number = "1001"\\nbalance = 50000\\nprint("Account holder:", account_holder)\\nprint("Account number:", account_number)\\nprint("Balance: ₹", balance)',
+secure:'# Concept demo only — no real database is connected\\nusername = "alice"\\nquery = "SELECT * FROM users WHERE username = ?"\\nparameters = (username,)\\nprint("SQL structure:", query)\\nprint("Separate parameter:", parameters)\\nprint("The value is passed separately from the SQL structure.")'};
+const code=document.getElementById('code'),out=document.getElementById('output'),status=document.getElementById('status'),run=document.getElementById('run');
+function loadSample(){code.value=samples[document.getElementById('sample').value].replaceAll('\\\\n','\\n')}
+document.getElementById('sample').onchange=loadSample;document.getElementById('reset').onclick=()=>{loadSample();out.textContent='Editor reset. Press Run Python.'};document.getElementById('clear').onclick=()=>out.textContent='';
+let pyodide=null;
+(async()=>{try{pyodide=await loadPyodide();status.textContent='Python ready. Run your code.';out.textContent='Ready! Try print("Hello, world!")';run.disabled=false}catch(e){status.textContent='Python could not load. Check internet and refresh.';out.textContent=String(e)}})();
+run.onclick=async()=>{if(!pyodide)return;run.disabled=true;status.textContent='Running…';out.textContent='';try{pyodide.globals.set('user_code',code.value);let result=await pyodide.runPythonAsync(`import io, sys, traceback
+_buffer = io.StringIO()
+_old_stdout, _old_stderr = sys.stdout, sys.stderr
+sys.stdout = _buffer
+sys.stderr = _buffer
+try:
+    exec(user_code, {})
+except Exception:
+    traceback.print_exc()
+finally:
+    sys.stdout, sys.stderr = _old_stdout, _old_stderr
+_buffer.getvalue()`);out.textContent=result||'(No output. Use print() to display a result.)';status.textContent='Execution finished.'}catch(e){out.textContent=String(e);status.textContent='Execution error.'}finally{run.disabled=false}};
+</script></body></html>
