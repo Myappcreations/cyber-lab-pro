@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Lab Pro — XSS Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#131c31;--line:#293752;--txt:#e8eefc;--muted:#9eacc7;--cyan:#48d7e8;--green:#5fe0a0;--red:#ff7777;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101a30);color:var(--txt);font:15px/1.55 system-ui,Arial}header,main{max-width:960px;margin:auto;padding:22px 16px}h1{font-size:clamp(26px,5vw,38px);margin:3px 0}h2{font-size:20px;margin:0 0 12px}.tag{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 16px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:650px){.row{grid-template-columns:1fr}}label{display:block;margin:9px 0}textarea{width:100%;min-height:100px;background:#0e1729;color:var(--txt);border:1px solid #40516f;border-radius:10px;padding:12px;font:14px/1.5 monospace}button{border:0;border-radius:10px;padding:11px 14px;margin:8px 6px 0 0;background:var(--cyan);color:#07131c;font-weight:800}button.secondary{background:#263754;color:var(--txt);border:1px solid #40516f}.output,pre{background:#091120;border:1px solid var(--line);border-radius:10px;padding:13px;overflow-wrap:anywhere;white-space:pre-wrap;min-height:55px}code,pre{font-family:monospace}.status{font-weight:750;margin-top:9px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}.question{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.question label{font-weight:400}.pill{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:4px 10px;color:var(--muted);font-size:12px}footer{text-align:center;color:var(--muted);font-size:12px;padding:12px}
+</style></head>
+<body>
+<header><div class="tag">Cyber Lab Pro · Module 02</div><h1>Cross-Site Scripting (XSS) Lab</h1><p class="muted">Learn how unsafe content handling can affect a browser — with a safe, local simulation.</p></header>
+<main>
+<section class="card"><h2>1. XSS in simple words</h2>
+<p>XSS happens when an application places untrusted input into a web page unsafely. The browser may interpret that input as HTML or JavaScript instead of displaying it as ordinary text.</p>
+<ul><li><b>Stored XSS:</b> input is saved (such as a comment) and shown to users later.</li><li><b>Reflected XSS:</b> input is immediately reflected in a response page.</li><li><b>DOM-based XSS:</b> client-side JavaScript handles untrusted data unsafely and changes the page.</li></ul>
+<p class="muted">This lab never executes submitted HTML or JavaScript. It only demonstrates the security difference.</p></section>
+<section class="card"><h2>2. Safe browser simulation</h2>
+<p>Try normal text, then load the harmless training string. The unsafe panel models the risk; it does not run the input.</p>
+<label for="comment">Comment / user input</label><textarea id="comment" spellcheck="false">Hello everyone! This is my comment.</textarea>
+<button id="sample" class="secondary" type="button">Load XSS example</button><button id="vulnerable" type="button">Simulate unsafe rendering</button><button id="secure" type="button">Simulate safe rendering</button><button id="reset" class="secondary" type="button">Reset</button>
+<div class="row" style="margin-top:14px"><div><b>Unsafe-rendering simulation</b><div id="unsafeOut" class="output">Waiting for input…</div><div id="unsafeStatus" class="status muted">Not tested</div></div><div><b>Safe-rendering simulation</b><div id="safeOut" class="output">Waiting for input…</div><div id="safeStatus" class="status muted">Not tested</div></div></div>
+<p class="muted">Training string: <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></p></section>
+<section class="card"><h2>3. XSS prevention</h2><ul><li>Use <code>textContent</code> to display plain text.</li><li>Use context-aware output encoding for HTML, attributes, URLs, CSS, and JavaScript contexts.</li><li>Avoid inserting untrusted input with <code>innerHTML</code>.</li><li>If rich HTML is required, use a reputable maintained sanitizer with a strict allowlist.</li><li>Use Content Security Policy (CSP) as an additional layer, not the only fix.</li></ul>
+<b>Safer pattern</b><pre>const comment = userInput;
+document.querySelector("#commentBox").textContent = comment;</pre>
+<b>Risky pattern — do not use with untrusted input</b><pre>document.querySelector("#commentBox").innerHTML = userInput;</pre>
+<p class="muted">These are teaching examples; this lab does not run the risky pattern.</p></section>
+<section class="card"><h2>4. Knowledge check</h2>
+<div class="question"><b>Q1. Which property is generally safer for displaying untrusted plain text?</b><label><input type="radio" name="q1" value="a"> innerHTML</label><label><input type="radio" name="q1" value="b"> textContent</label><label><input type="radio" name="q1" value="c"> document.write</label></div>
+<div class="question"><b>Q2. A saved comment later affects visitors. Which type?</b><label><input type="radio" name="q2" value="a"> Stored XSS</label><label><input type="radio" name="q2" value="b"> Reflected XSS</label><label><input type="radio" name="q2" value="c"> DOM-based XSS</label></div>
+<div class="question"><b>Q3. Is CSP a replacement for safe output handling?</b><label><input type="radio" name="q3" value="a"> Yes</label><label><input type="radio" name="q3" value="b"> No, it is an additional layer</label></div>
+<button id="check" type="button">Check answers</button><button id="clearQuiz" class="secondary" type="button">Clear answers</button><div id="quizResult" class="status" aria-live="polite"></div></section>
+<section class="card"><h2>5. Your practice task</h2><p>Change the comment to <code>My name is Ravi</code>. Run both simulations. Then explain why <code>textContent</code> is safer than <code>innerHTML</code> for plain text.</p><span class="pill">Next module: Authentication &amp; Session Security</span></section>
+<footer>Cyber Lab Pro · Authorized learning only · Browser-only simulation · No payload execution</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const sample="<script>alert('XSS')<\\/script>";
+function markupLike(s){return /<\s*\/?\s*[a-z][^>]*>/i.test(s)||/javascript\s*:/i.test(s)}
+function run(mode){const v=$("comment").value, risky=markupLike(v);if(mode==="unsafe"){$("unsafeOut").textContent=v;$("unsafeStatus").textContent=risky?"Risk detected: unsafe HTML interpretation could create an XSS issue.":"No HTML-like input detected by this simple check.";$("unsafeStatus").className="status "+(risky?"bad":"muted")}else{$("safeOut").textContent=v;$("safeStatus").textContent="Safe display: input is shown as text, not interpreted as HTML.";$("safeStatus").className="status good"}}
+$("sample").onclick=()=>{$("comment").value=sample};
+$("vulnerable").onclick=()=>run("unsafe");$("secure").onclick=()=>run("safe");
+$("reset").onclick=()=>{$("comment").value="Hello everyone! This is my comment.";$("unsafeOut").textContent="Waiting for input…";$("safeOut").textContent="Waiting for input…";["unsafeStatus","safeStatus"].forEach(id=>{$(id).textContent="Not tested";$(id).className="status muted"})};
+$("check").onclick=()=>{const a={q1:"b",q2:"a",q3:"b"};let n=0;for(const [q,v] of Object.entries(a)){const c=document.querySelector('input[name="'+q+'"]:checked');if(c&&c.value===v)n++}$("quizResult").textContent="Your score: "+n+"/3. "+(n===3?"Excellent — all correct!":"Review the prevention section and try again.");$("quizResult").className="status "+(n===3?"good":"warn")};
+$("clearQuiz").onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);$("quizResult").textContent=""};
+</script></body></html>
