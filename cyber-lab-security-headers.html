@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyber Lab Pro — Security Headers Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--line:#2b3a56;--txt:#edf3ff;--muted:#a1aec6;--cyan:#55d8e8;--green:#5fe0a0;--red:#ff7777;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101b30);color:var(--txt);font:15px/1.65 system-ui,Arial}header,main{max-width:960px;margin:auto;padding:22px 16px}.tag{font-size:12px;color:var(--cyan);font-weight:800;letter-spacing:.1em}h1{font-size:clamp(25px,5vw,36px);line-height:1.3}h2{font-size:20px}.muted{color:var(--muted)}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:650px){.grid{grid-template-columns:1fr}}label{display:block;margin:10px 0 5px}select,input{width:100%;padding:12px;border-radius:9px;border:1px solid #40516f;background:#0c1628;color:var(--txt);font:inherit}button{border:0;border-radius:9px;padding:11px 15px;margin:9px 7px 0 0;background:var(--cyan);color:#07151a;font-weight:800}button.secondary{background:#293954;color:var(--txt);border:1px solid #40516f}.output,pre{padding:13px;background:#091321;border:1px solid var(--line);border-radius:10px;min-height:52px;overflow-wrap:anywhere;white-space:pre-wrap}.status{font-weight:750;margin-top:9px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}.quiz{border:1px solid var(--line);padding:12px;border-radius:10px;margin:10px 0}.quiz label{font-weight:400}code,pre{font-family:ui-monospace,monospace}footer{text-align:center;color:var(--muted);font-size:12px;padding:16px}
+</style></head><body>
+<header><div class="tag">CYBER LAB PRO · MODULE 06</div><h1>Security Headers &amp; Secure API Design</h1><p class="muted">Learn how response headers help protect web applications, and understand CORS without confusing it with authentication.</p></header>
+<main>
+<section class="card"><h2>1. Security Headers అంటే ఏమిటి?</h2>
+<p>HTTP Responseలో Server కొన్ని అదనపు instructionsను Headers రూపంలో Browserకి పంపుతుంది. వీటిలో కొన్ని browser behaviorని నియంత్రించి common web risks తగ్గించడంలో సహాయపడతాయి.</p>
+<ul><li><b>Content-Security-Policy (CSP):</b> ఏ sources నుంచి scripts, styles, images load కావాలో నియంత్రిస్తుంది.</li><li><b>Strict-Transport-Security (HSTS):</b> Browserను HTTPS connection ఉపయోగించమని సూచిస్తుంది.</li><li><b>X-Content-Type-Options: nosniff:</b> Browser MIME typeని ఊహించి contentని వేరే విధంగా interpret చేయకుండా సహాయపడుతుంది.</li><li><b>frame-ancestors (CSP):</b> మీ pageని ఏ sites frameలో embed చేయవచ్చో నియంత్రిస్తుంది. ఇది clickjacking risk తగ్గిస్తుంది.</li><li><b>Referrer-Policy:</b> ఇతర sitesకి navigation చేసినప్పుడు ఎంత referrer information పంపాలో నియంత్రిస్తుంది.</li></ul>
+<p class="muted">Security headers ఒక్కటే complete security కాదు. Secure coding, authentication, authorization మరియు server configuration కూడా అవసరం.</p></section>
+
+<section class="card"><h2>2. Header Inspector Simulation</h2>
+<p>ఒక fictional server responseని ఎంచుకోండి. ఆ responseలో ఏ security headers ఉన్నాయో inspect చేయండి. ఇది static training simulation మాత్రమే.</p>
+<label for="profile">Response Profile</label><select id="profile"><option value="weak">Basic / Missing Security Headers</option><option value="better">Improved Security Headers</option></select>
+<button id="inspect">Inspect Response</button><button id="reset" class="secondary">Reset</button>
+<div class="grid" style="margin-top:14px"><div><b>Response Headers</b><div id="headers" class="output">Select a profile and inspect.</div></div><div><b>Analysis</b><div id="analysis" class="output">Waiting for inspection…</div><div id="score" class="status muted">No result yet</div></div></div></section>
+
+<section class="card"><h2>3. CORS — What does it do?</h2>
+<p><b>CORS (Cross-Origin Resource Sharing)</b> అనేది Browser అమలు చేసే policy mechanism. ఒక Web Page వేరే Originలో ఉన్న APIని access చేయడానికి Server ఏ originsకి అనుమతి ఇస్తుందో Response Headers ద్వారా తెలియజేస్తుంది.</p>
+<p><b>Origin</b> అంటే scheme + host + port. ఉదాహరణకు <code>https://app.example</code> మరియు <code>https://api.example</code> వేర్వేరు origins.</p>
+<p><b>ముఖ్యమైన విషయం:</b> CORS అనేది Authentication లేదా Authorizationకి ప్రత్యామ్నాయం కాదు. CORS allow చేసినా Server ప్రతి requestకి user permission verify చేయాలి.</p>
+<div class="grid"><div><label for="origin">Request Origin</label><select id="origin"><option value="https://app.example">https://app.example</option><option value="https://unknown.example">https://unknown.example</option></select><label for="corsMode">Server CORS Configuration</label><select id="corsMode"><option value="allow">Allow only https://app.example</option><option value="star">Allow all origins (*) — public demo</option><option value="none">No CORS allow header</option></select><button id="corsCheck">Check CORS Result</button></div><div><b>Browser CORS Simulation</b><div id="corsOutput" class="output">Waiting for origin check…</div><div id="corsStatus" class="status muted">No result yet</div></div></div>
+<p class="muted">This illustrates browser cross-origin response access only. It does not send a network request or prove that an API is secure.</p></section>
+
+<section class="card"><h2>4. Secure API Design Checklist</h2>
+<ul><li>Use HTTPS everywhere; configure HSTS carefully after HTTPS is fully enabled.</li><li>Set a restrictive CSP and test it before enforcing in production.</li><li>Use <code>X-Content-Type-Options: nosniff</code>.</li><li>Use CSP <code>frame-ancestors</code> to control framing.</li><li>Configure CORS with specific trusted origins; avoid wildcard origins when credentials are involved.</li><li>Never rely on CORS as access control. Enforce authorization on the server for every endpoint and object.</li><li>Keep API secrets out of browser JavaScript and public repositories.</li><li>Log security events safely and avoid exposing stack traces or secrets in errors.</li></ul>
+<pre>Content-Security-Policy: default-src 'self'; object-src 'none'; frame-ancestors 'none'
+Strict-Transport-Security: max-age=31536000
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin</pre>
+<p class="muted">Example policies need adjustment for each application. Do not copy a CSP blindly; test required scripts, styles, APIs and integrations first.</p></section>
+
+<section class="card"><h2>5. Knowledge Check</h2>
+<div class="quiz"><b>Q1. CSP primarily helps control what?</b><label><input type="radio" name="q1" value="a"> Which content sources the browser may load</label><label><input type="radio" name="q1" value="b"> The user's bank balance</label></div>
+<div class="quiz"><b>Q2. Does CORS replace server-side authorization?</b><label><input type="radio" name="q2" value="a"> Yes</label><label><input type="radio" name="q2" value="b"> No</label></div>
+<div class="quiz"><b>Q3. Which header helps prevent MIME-type sniffing?</b><label><input type="radio" name="q3" value="a"> X-Content-Type-Options: nosniff</label><label><input type="radio" name="q3" value="b"> Accept-Language</label></div>
+<button id="check">Check Answers</button><button id="clear" class="secondary">Clear</button><div id="quizResult" class="status" aria-live="polite"></div></section>
+
+<section class="card"><h2>6. Practice Task</h2>
+<p>1. Inspect the Basic profile and note which headers are missing.</p><p>2. Inspect the Improved profile and compare the analysis.</p><p>3. In the CORS simulator, test both allowed and unknown origins using the allowlist configuration.</p>
+<p><b>Think:</b> If CORS allows a website, does that automatically mean every logged-in user can access all API data? Explain why not.</p></section>
+<footer>Cyber Lab Pro · Authorized learning only · Static browser simulations · No external requests</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const weak={"Content-Type":"application/json","Server":"training-demo"};
+const better={"Content-Type":"application/json","Content-Security-Policy":"default-src 'self'; object-src 'none'; frame-ancestors 'none'","Strict-Transport-Security":"max-age=31536000","X-Content-Type-Options":"nosniff","Referrer-Policy":"strict-origin-when-cross-origin"};
+$("inspect").onclick=()=>{const set=$("profile").value==="weak"?weak:better;const lines=Object.entries(set).map(([k,v])=>k+": "+v);$("headers").textContent=lines.join("\n");const checks=[["Content-Security-Policy",!!set["Content-Security-Policy"]],["Strict-Transport-Security",!!set["Strict-Transport-Security"]],["X-Content-Type-Options",!!set["X-Content-Type-Options"]],["Referrer-Policy",!!set["Referrer-Policy"]]];const missing=checks.filter(x=>!x[1]).map(x=>x[0]);$("analysis").textContent=missing.length?"Missing in this demo: "+missing.join(", "):"All four teaching checks are present in this sample. Review the policy values and adapt them to the real application."; $("score").textContent=(checks.length-missing.length)+"/"+checks.length+" sample checks present";$("score").className="status "+(missing.length?"warn":"good");};
+$("reset").onclick=()=>{$("profile").value="weak";$("headers").textContent="Select a profile and inspect.";$("analysis").textContent="Waiting for inspection…";$("score").textContent="No result yet";$("score").className="status muted";};
+$("corsCheck").onclick=()=>{const o=$("origin").value,m=$("corsMode").value;let ok=false,msg="";if(m==="allow"){ok=o==="https://app.example";msg=ok?"CORS allowlist matches this origin. Browser may expose the response to this origin.":"Origin is not in the server allowlist. Browser blocks page JavaScript from reading the response.";}else if(m==="star"){ok=true;msg="Server uses Access-Control-Allow-Origin: *. This sample allows any origin for a non-credentialed public resource. It does not grant user permissions.";}else{msg="No Access-Control-Allow-Origin header. Browser blocks page JavaScript from reading the cross-origin response.";} $("corsOutput").textContent=msg;$("corsStatus").textContent=ok?"CORS check: allowed in this simulation":"CORS check: blocked in this simulation";$("corsStatus").className="status "+(ok?"good":"bad");};
+$("check").onclick=()=>{const a={q1:"a",q2:"b",q3:"a"};let n=0;for(const [q,v] of Object.entries(a)){const c=document.querySelector('input[name="'+q+'"]:checked');if(c&&c.value===v)n++;}$("quizResult").textContent="Your Score: "+n+"/3. "+(n===3?"Excellent! All answers correct.":"Review the lesson and try again.");$("quizResult").className="status "+(n===3?"good":"warn");};
+$("clear").onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(x=>x.checked=false);$("quizResult").textContent="";};
+</script></body></html>
